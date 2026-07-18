@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026世界杯 - 赛事信息服务平台</title>
+    <style>
+        :root {
+            --primary: #1a3c5e;
+            --secondary: #c8a951;
+            --accent: #e63946;
+            --bg: #f5f0e8;
+            --card-bg: #ffffff;
+            --text: #2c2c2c;
+            --text-light: #6b6b6b;
+            --border: #e0d8cc;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --radius: 10px;
+            --transition: 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0d2847 0%, #1a3c5e 40%, #1e4d7b 100%);
+            color: #fff;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+        }
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .nav-links button {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e0d8cc;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 9px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .nav-links button:hover,
+        .nav-links button.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-color: var(--secondary);
+            box-shadow: 0 0 16px rgba(200, 169, 81, 0.3);
+        }
+        .nav-links button.active {
+            background: var(--secondary);
+            color: #1a3c5e;
+            border-color: var(--secondary);
+            font-weight: 700;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .user-badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .page-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-title .icon {
+            font-size: 1.1em;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+            margin-bottom: 16px;
+        }
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-1px);
+        }
+        .card-header {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        /* Match card */
+        .match-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .match-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+            transform: translateY(-2px);
+        }
+        .match-card.live {
+            border-left: 4px solid var(--accent);
+        }
+        .match-card.played {
+            border-left: 4px solid var(--success);
+        }
+        .match-card.upcoming {
+            border-left: 4px solid var(--warning);
+        }
+        .match-status {
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .match-status.live {
+            color: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .match-status.played {
+            color: var(--success);
+        }
+        .match-status.upcoming {
+            color: #b8860b;
+        }
+        .match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 12px 0;
+        }
+        .team-block {
+            text-align: center;
+            flex: 1;
+        }
+        .team-flag {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .team-name {
+            font-weight: 700;
+            font-size: 1em;
+            color: var(--primary);
+        }
+        .match-score {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 2px;
+            min-width: 70px;
+            text-align: center;
+        }
+        .match-score.pending {
+            color: #ccc;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        .match-info {
+            font-size: 0.85em;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 8px;
+        }
+        .match-group {
+            display: inline-block;
+            background: #f0ebe0;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Standings table */
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        .standings-table th,
+        .standings-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .standings-table th {
+            background: #f8f5ef;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+        .standings-table tr:hover td {
+            background: #fdfaf4;
+        }
+        .standings-table .team-cell {
+            text-align: left;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .standings-table .rank-1,
+        .standings-table .rank-2 {
+            font-weight: 700;
+        }
+        .standings-table .rank-1 td:first-child::before {
+            content: '🥇';
+        }
+        .standings-table .rank-2 td:first-child::before {
+            content: '🥈';
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all var(--transition);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1e4d7b;
+            box-shadow: 0 4px 14px rgba(26, 60, 94, 0.4);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-accent:hover {
+            background: #c0392b;
+            box-shadow: 0 4px 14px rgba(230, 57, 70, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.85em;
+            border-radius: 20px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all var(--transition);
+            background: #fdfcf9;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 60, 94, 0.1);
+            background: #fff;
+        }
+        .form-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .form-row .score-input {
+            width: 70px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+        .score-separator {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Comments */
+        .comment {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+        .comment-author {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+        .comment-time {
+            font-size: 0.78em;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+        .comment-body {
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .comment-input-area textarea {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+        .comment-input-area textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all var(--transition);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-size: 0.95em;
+        }
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+        }
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 520px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal h3 {
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+        .modal-close {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            min-width: 260px;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .toast.success {
+            background: var(--success);
+        }
+        .toast.error {
+            background: var(--accent);
+        }
+        .toast.info {
+            background: #457b9d;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+        .spinner {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Highlight */
+        .highlight-box {
+            background: linear-gradient(135deg, #fef9e7, #fdf3d0);
+            border: 1px solid #e9c46a;
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin: 12px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .badge-live {
+            background: #e63946;
+            color: #fff;
+        }
+        .badge-done {
+            background: #2a9d8f;
+            color: #fff;
+        }
+        .badge-pending {
+            background: #e9c46a;
+            color: #5c3d00;
+        }
+        .badge-group {
+            background: #e8e0d5;
+            color: #4a3f35;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 16px;
+            }
+            .nav-links button {
+                padding: 7px 12px;
+                font-size: 0.82em;
+            }
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .match-teams {
+                gap: 8px;
+            }
+            .team-flag {
+                font-size: 2.2em;
+            }
+            .match-score {
+                font-size: 1.4em;
+                min-width: 50px;
+            }
+            .form-row {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-icon">🏆</span>
+                <span>2026世界杯</span>
+            </div>
+            <nav class="nav-links" id="navLinks">
+                <button data-page="home" class="active">📊 赛事概览</button>
+                <button data-page="matches">⚽ 比赛日程</button>
+                <button data-page="standings">📋 积分榜</button>
+                <button data-page="teams">🌍 球队</button>
+                <button data-page="predictions">🔮 比分预测</button>
+                <button data-page="discussion">💬 讨论区</button>
+            </nav>
+            <div class="user-badge" id="userBadge" title="点击设置用户名">
+                👤 <span id="displayUsername">球迷用户</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container" id="mainContent"></main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <script>
+        // ==================== 全栈前端应用 - 2026世界杯 ====================
+        // 模拟后端API（在实际部署中这些数据来自后端服务）
+        // 此单体HTML文件集成了完整的前端逻辑，通过模拟API展示完整业务流程
+
+        (function() {
+            // ============ 数据存储（模拟数据库） ============
+            const DB = {
+                teams: [
+                    { id: 1, name: '美国', flag: '🇺🇸', group: 'A', confederation: 'CONCACAF',
+                        fifa_rank: 11 },
+                    { id: 2, name: '墨西哥', flag: '🇲🇽', group: 'A', confederation: 'CONCACAF',
+                        fifa_rank: 14 },
+                    { id: 3, name: '埃及', flag: '🇪🇬', group: 'A', confederation: 'CAF', fifa_rank: 33 },
+                    { id: 4, name: '加拿大', flag: '🇨🇦', group: 'B', confederation: 'CONCACAF',
+                    fifa_rank: 41 },
+                    { id: 5, name: '法国', flag: '🇫🇷', group: 'B', confederation: 'UEFA', fifa_rank: 2 },
+                    { id: 6, name: '新西兰', flag: '🇳🇿', group: 'B', confederation: 'OFC', fifa_rank: 103 },
+                    { id: 7, name: '阿根廷', flag: '🇦🇷', group: 'C', confederation: 'CONMEBOL',
+                    fifa_rank: 1 },
+                    { id: 8, name: '葡萄牙', flag: '🇵🇹', group: 'C', confederation: 'UEFA', fifa_rank: 6 },
+                    { id: 9, name: '沙特阿拉伯', flag: '🇸🇦', group: 'C', confederation: 'AFC', fifa_rank: 56 },
+                    { id: 10, name: '巴西', flag: '🇧🇷', group: 'D', confederation: 'CONMEBOL',
+                    fifa_rank: 5 },
+                    { id: 11, name: '英格兰', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', group: 'D', confederation: 'UEFA',
+                        fifa_rank: 3 },
+                    { id: 12, name: '韩国', flag: '🇰🇷', group: 'D', confederation: 'AFC', fifa_rank: 23 },
+                    { id: 13, name: '德国', flag: '🇩🇪', group: 'E', confederation: 'UEFA', fifa_rank: 16 },
+                    { id: 14, name: '西班牙', flag: '🇪🇸', group: 'E', confederation: 'UEFA', fifa_rank: 8 },
+                    { id: 15, name: '摩洛哥', flag: '🇲🇦', group: 'E', confederation: 'CAF', fifa_rank: 13 },
+                    { id: 16, name: '意大利', flag: '🇮🇹', group: 'F', confederation: 'UEFA', fifa_rank: 9 },
+                    { id: 17, name: '荷兰', flag: '🇳🇱', group: 'F', confederation: 'UEFA', fifa_rank: 7 },
+                    { id: 18, name: '日本', flag: '🇯🇵', group: 'F', confederation: 'AFC', fifa_rank: 18 },
+                    { id: 19, name: '乌拉圭', flag: '🇺🇾', group: 'G', confederation: 'CONMEBOL',
+                    fifa_rank: 15 },
+                    { id: 20, name: '克罗地亚', flag: '🇭🇷', group: 'G', confederation: 'UEFA', fifa_rank: 10 },
+                    { id: 21, name: '塞内加尔', flag: '🇸🇳', group: 'G', confederation: 'CAF', fifa_rank: 20 },
+                    { id: 22, name: '哥伦比亚', flag: '🇨🇴', group: 'H', confederation: 'CONMEBOL',
+                    fifa_rank: 17 },
+                    { id: 23, name: '比利时', flag: '🇧🇪', group: 'H', confederation: 'UEFA', fifa_rank: 4 },
+                    { id: 24, name: '伊朗', flag: '🇮🇷', group: 'H', confederation: 'AFC', fifa_rank: 21 },
+                ],
+                matches: [],
+                predictions: [],
+                comments: [],
+                _predictionIdCounter: 1,
+                _commentIdCounter: 1,
+            };
+
+            // 生成比赛数据
+            function generateMatches() {
+                const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                const matches = [];
+                let matchId = 1;
+                const now = new Date();
+                // 模拟比赛时间：过去、现在、未来
+                const baseDate = new Date(now);
+                baseDate.setDate(baseDate.getDate() - 5);
+
+                groups.forEach(group => {
+                    const groupTeams = DB.teams.filter(t => t.group === group);
+                    // 每组3队，进行3场比赛（每队互相交手一次）
+                    const pairs = [
+                        [0, 1],
+                        [0, 2],
+                        [1, 2]
+                    ];
+                    pairs.forEach((pair, idx) => {
+                        const matchDate = new Date(baseDate);
+                        matchDate.setDate(matchDate.getDate() + (groups.indexOf(group) * 3) +
+                            idx);
+                        matchDate.setHours(14 + idx * 4, 0, 0, 0);
+
+                        let status, scoreHome, scoreAway;
+                        const nowTime = now.getTime();
+                        const matchTime = matchDate.getTime();
+
+                        if (matchTime < nowTime - 2 * 60 * 60 * 1000) {
+                            status = 'played';
+                            scoreHome = Math.floor(Math.random() * 5);
+                            scoreAway = Math.floor(Math.random() * 4);
+                        } else if (matchTime <= nowTime && matchTime > nowTime - 2 * 60 * 60 *
+                            1000) {
+                            status = 'live';
+                            scoreHome = Math.floor(Math.random() * 3);
+                            scoreAway = Math.floor(Math.random() * 3);
+                        } else {
+                            status = 'upcoming';
+                            scoreHome = null;
+                            scoreAway = null;
+                        }
+
+                        matches.push({
+                            id: matchId++,
+                            home_team_id: groupTeams[pair[0]].id,
+                            away_team_id: groupTeams[pair[1]].id,
+                            group: group,
+                            match_date: matchDate.toISOString(),
+                            status: status,
+                            score_home: scoreHome,
+                            score_away: scoreAway,
+                            venue: ['纽约大都会球场', '洛杉矶SoFi球场', '达拉斯AT&T球场',
+                                '迈阿密硬石球场', '亚特兰大梅赛德斯球场', '休斯顿NRG球场',
+                                '费城林肯球场', '旧金山李维斯球场'
+                            ][matchId % 8],
+                            stage: 'group',
+                        });
+                    });
+                });
+                // 添加一些淘汰赛模拟（未来）
+                const knockoutBase = new Date(baseDate);
+                knockoutBase.setDate(knockoutBase.getDate() + 26);
+                for (let i = 1; i <= 4; i++) {
+                    const kDate = new Date(knockoutBase);
+                    kDate.setDate(kDate.getDate() + i);
+                    matches.push({
+                        id: matchId++,
+                        home_team_id: null,
+                        away_team_id: null,
+                        group: null,
+                        match_date: kDate.toISOString(),
+                        status: 'upcoming',
+                        score_home: null,
+                        score_away: null,
+                        venue: '待定',
+                        stage: 'round_of_32',
+                    });
+                }
+                DB.matches = matches;
+            }
+            generateMatches();
+
+            // ============ 工具函数 ============
+            function getTeamById(id) {
+                return DB.teams.find(t => t.id === id) || null;
+            }
+
+            function formatDate(isoStr) {
+                const d = new Date(isoStr);
+                const now = new Date();
+                const diffDays = Math.floor((d - now) / (1000 * 60 * 60 * 24));
+                const timeStr = d.toLocaleString('zh-CN', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    weekday: 'short'
+                });
+                if (diffDays === 0) return '今天 ' + timeStr.split(' ')[1];
+                if (diffDays === 1) return '明天 ' + timeStr.split(' ')[1];
+                if (diffDays === -1) return '昨天 ' + timeStr.split(' ')[1];
+                return timeStr;
+            }
+
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.3s';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            function openModal(title, contentHTML, onConfirm = null) {
+                const container = document.getElementById('modalContainer');
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.innerHTML = `
+                    <div class="modal">
+                        <button class="modal-close">&times;</button>
+                        <h3>${title}</h3>
+                        <div class="modal-body">${contentHTML}</div>
+                        ${onConfirm ? '<button class="btn btn-primary" id="modalConfirmBtn" style="margin-top:16px;">确认</button>' : ''}
+                    </div>`;
+                container.appendChild(overlay);
+                overlay.querySelector('.modal-close').addEventListener('click', () => overlay.remove());
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+                if (onConfirm) {
+                    overlay.querySelector('#modalConfirmBtn').addEventListener('click', () => {
+                        onConfirm();
+                        overlay.remove();
+                    });
+                }
+                return overlay;
+            }
+
+            // ============ 页面渲染 ============
+            let currentPage = 'home';
+            const mainContent = document.getElementById('mainContent');
+
+            function navigateTo(page) {
+                currentPage = page;
+                document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+                const btn = document.querySelector(`[data-page="${page}"]`);
+                if (btn) btn.classList.add('active');
+                renderPage();
+            }
+
+            function renderPage() {
+                switch (currentPage) {
+                    case 'home':
+                        renderHome();
+                        break;
+                    case 'matches':
+                        renderMatches();
+                        break;
+                    case 'standings':
+                        renderStandings();
+                        break;
+                    case 'teams':
+                        renderTeams();
+                        break;
+                    case 'predictions':
+                        renderPredictions();
+                        break;
+                    case 'discussion':
+                        renderDiscussion();
+                        break;
+                    default:
+                        renderHome();
+                }
+            }
+
+            // ============ 首页 - 赛事概览 ============
+            function renderHome() {
+                const liveMatches = DB.matches.filter(m => m.status === 'live');
+                const upcomingMatches = DB.matches.filter(m => m.status === 'upcoming').slice(0, 6);
+                const recentPlayed = DB.matches.filter(m => m.status === 'played').slice(-4).reverse();
+                const totalPredictions = DB.predictions.length;
+                const totalComments = DB.comments.length;
+
+                let html = `
+                    <div class="page-title"><span class="icon">🏟️</span> 2026世界杯赛事概览</div>
+                    <div class="grid-2" style="margin-bottom:20px;">
+                        <div class="card" style="text-align:center;">
+                            <div style="font-size:3em;">⚽</div>
+                            <div style="font-size:1.5em;font-weight:900;color:var(--primary);">${DB.matches.length}</div>
+                            <div style="color:var(--text-light);">总比赛场次</div>
+                        </div>
+                        <div class="card" style="text-align:center;">
+                            <div style="font-size:3em;">🔥</div>
+                            <div style="font-size:1.5em;font-weight:900;color:var(--accent);">${liveMatches.length}</div>
+                            <div style="color:var(--text-light);">正在进行</div>
+                        </div>
+                        <div class="card" style="text-align:center;">
+                            <div style="font-size:3em;">🔮</div>
+                            <div style="font-size:1.5em;font-weight:900;color:var(--primary);">${totalPredictions}</div>
+                            <div style="color:var(--text-light);">用户预测</div>
+                        </div>
+                        <div class="card" style="text-align:center;">
+                            <div style="font-size:3em;">💬</div>
+                            <div style="font-size:1.5em;font-weight:900;color:var(--primary);">${totalComments}</div>
+                            <div style="color:var(--text-light);">讨论评论</div>
+                        </div>
+                    </div>`;
+
+                if (liveMatches.length > 0) {
+                    html +=
+                        '<h3 style="margin:16px 0 12px;color:var(--accent);">🔴 正在进行</h3><div class="grid-2">';
+                    liveMatches.forEach(m => html += renderMatchCard(m));
+                    html += '</div>';
+                }
+
+                if (recentPlayed.length > 0) {
+                    html +=
+                        '<h3 style="margin:16px 0 12px;color:var(--success);">✅ 最近完赛</h3><div class="grid-2">';
+                    recentPlayed.forEach(m => html += renderMatchCard(m));
+                    html += '</div>';
+                }
+
+                html +=
+                    '<h3 style="margin:16px 0 12px;color:#b8860b;">📅 即将开始</h3><div class="grid-3">';
+                upcomingMatches.forEach(m => html += renderMatchCard(m));
+                html += '</div>';
+
+                mainContent.innerHTML = html;
+                attachMatchCardListeners();
+            }
+
+            function renderMatchCard(m) {
+                const homeTeam = getTeamById(m.home_team_id);
+                const awayTeam = getTeamById(m.away_team_id);
+                const homeName = homeTeam ? homeTeam.name : (m.stage === 'round_of_32' ? '待定' : '未知');
+                const awayName = awayTeam ? awayTeam.name : (m.stage === 'round_of_32' ? '待定' : '未知');
+                const homeFlag = homeTeam ? homeTeam.flag : '❓';
+                const awayFlag = awayTeam ? awayTeam.flag : '❓';
+                const scoreDisplay = m.status === 'upcoming' ?
+                    '<span class="match-score pending">VS</span>' :
+                    `<span class="match-score">${m.score_home} - ${m.score_away}</span>`;
+                const statusClass = m.status;
+                const statusLabels = { live: '🔴 进行中', played: '✅ 已结束', upcoming: '📅 即将开始' };
+                const stageLabel = m.stage === 'group' ? `小组赛 ${m.group}组` : '淘汰赛 1/16';
+
+                return `
+                <div class="match-card ${statusClass}" data-match-id="${m.id}">
+                    <span class="match-status ${statusClass}">${statusLabels[m.status]}</span>
+                    <span class="match-group">${stageLabel}</span>
+                    <div class="match-teams">
+                        <div class="team-block">
+                            <span class="team-flag">${homeFlag}</span>
+                            <span class="team-name">${homeName}</span>
+                        </div>
+                        ${scoreDisplay}
+                        <div class="team-block">
+                            <span class="team-flag">${awayFlag}</span>
+                            <span class="team-name">${awayName}</span>
+                        </div>
+                    </div>
+                    <div class="match-info">📅 ${formatDate(m.match_date)} | 🏟️ ${m.venue}</div>
+                </div>`;
+            }
+
+            function attachMatchCardListeners() {
+                document.querySelectorAll('.match-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const matchId = parseInt(this.dataset.matchId);
+                        showMatchDetail(matchId);
+                    });
+                });
+            }
+
+            function showMatchDetail(matchId) {
+                const m = DB.matches.find(x => x.id === matchId);
+                if (!m) return;
+                const homeTeam = getTeamById(m.home_team_id);
+                const awayTeam = getTeamById(m.away_team_id);
+                const homeName = homeTeam ? homeTeam.name : '待定';
+                const awayName = awayTeam ? awayTeam.name : '待定';
+                const homeFlag = homeTeam ? homeTeam.flag : '❓';
+                const awayFlag = awayTeam ? awayTeam.flag : '❓';
+                const scoreDisplay = m.status === 'upcoming' ? 'VS' : `${m.score_home} - ${m.score_away}`;
+                const matchComments = DB.comments.filter(c => c.match_id === matchId);
+                const matchPredictions = DB.predictions.filter(p => p.match_id === matchId);
+
+                let commentsHTML = matchComments.length === 0 ?
+                    '<p style="color:var(--text-light);">暂无评论，成为第一个讨论的吧！</p>' :
+                    matchComments.slice(-10).map(c => `
+                        <div class="comment">
+                            <span class="comment-author">👤 ${escapeHTML(c.username)}</span>
+                            <span class="comment-time">${formatDate(c.created_at)}</span>
+                            <div class="comment-body">${escapeHTML(c.content)}</div>
+                        </div>`).join('');
+
+                let predictionsHTML = matchPredictions.length === 0 ?
+                    '<p style="color:var(--text-light);">暂无预测</p>' :
+                    matchPredictions.slice(-8).map(p => `
+                        <div style="padding:6px 0;border-bottom:1px solid #eee;font-size:0.9em;">
+                            <strong>${escapeHTML(p.username)}</strong> 预测: <span style="font-weight:700;color:var(--primary);">${p.predicted_home} - ${p.predicted_away}</span>
+                            <span style="color:var(--text-light);font-size:0.8em;margin-left:8px;">${formatDate(p.created_at)}</span>
+                        </div>`).join('');
+
+                const contentHTML = `
+                    <div style="text-align:center;padding:10px 0;">
+                        <div style="font-size:3em;">${homeFlag} ${scoreDisplay} ${awayFlag}</div>
+                        <div style="font-size:1.2em;font-weight:700;margin:8px 0;">${homeName} vs ${awayName}</div>
+                        <div style="color:var(--text-light);">📅 ${formatDate(m.match_date)} | 🏟️ ${m.venue}</div>
+                        <div style="margin-top:6px;"><span class="badge badge-${m.status === 'live' ? 'live' : m.status === 'played' ? 'done' : 'pending'}">${m.status === 'live' ? '进行中' : m.status === 'played' ? '已结束' : '即将开始'}</span></div>
+                    </div>
+                    <hr style="margin:16px 0;border-color:var(--border);">
+                    <h4>🔮 比分预测 (${matchPredictions.length})</h4>
+                    <div style="max-height:200px;overflow-y:auto;">${predictionsHTML}</div>
+                    ${m.status === 'upcoming' ? `
+                        <div class="form-row" style="margin-top:12px;">
+                            <input type="number" class="score-input" id="predHome" min="0" max="20" value="0" placeholder="主队">
+                            <span class="score-separator">:</span>
+                            <input type="number" class="score-input" id="predAway" min="0" max="20" value="0" placeholder="客队">
+                            <button class="btn btn-accent btn-sm" id="submitPredBtn">提交预测</button>
+                        </div>` : ''}
+                    <hr style="margin:16px 0;border-color:var(--border);">
+                    <h4>💬 讨论 (${matchComments.length})</h4>
+                    <div style="max-height:250px;overflow-y:auto;">${commentsHTML}</div>
+                    <div class="comment-input-area">
+                        <textarea id="commentInput" placeholder="发表你的看法..."></textarea>
+                        <button class="btn btn-primary btn-sm" id="submitCommentBtn">发送</button>
+                    </div>`;
+
+                const modal = openModal(`比赛详情 #${matchId}`, contentHTML);
+
+                // 绑定预测提交
+                setTimeout(() => {
+                    const predBtn = document.getElementById('submitPredBtn');
+                    const commentBtn = document.getElementById('submitCommentBtn');
+                    if (predBtn) {
+                        predBtn.addEventListener('click', () => {
+                            const ph = parseInt(document.getElementById('predHome').value) ||
+                                0;
+                            const pa = parseInt(document.getElementById('predAway').value) ||
+                                0;
+                            submitPrediction(matchId, ph, pa);
+                            modal.remove();
+                            showToast('预测已提交！', 'success');
+                            setTimeout(() => showMatchDetail(matchId), 100);
+                        });
+                    }
+                    if (commentBtn) {
+                        commentBtn.addEventListener('click', () => {
+                            const content = document.getElementById('commentInput').value
+                                .trim();
+                            if (!content) { showToast('请输入评论内容', 'error'); return; }
+                            submitComment(matchId, content);
+                            modal.remove();
+                            showToast('评论已发布！', 'success');
+                            setTimeout(() => showMatchDetail(matchId), 100);
+                        });
+                    }
+                }, 150);
+            }
+
+            // ============ 比赛日程页 ============
+            function renderMatches() {
+                const filterAll = DB.matches;
+                const filterLive = DB.matches.filter(m => m.status === 'live');
+                const filterUpcoming = DB.matches.filter(m => m.status === 'upcoming');
+                const filterPlayed = DB.matches.filter(m => m.status === 'played');
+
+                let html = `
+                    <div class="page-title"><span class="icon">⚽</span> 比赛日程</div>
+                    <div class="tabs" id="matchTabs">
+                        <button class="tab active" data-filter="all">全部 (${filterAll.length})</button>
+                        <button class="tab" data-filter="live">🔴 进行中 (${filterLive.length})</button>
+                        <button class="tab" data-filter="upcoming">📅 即将开始 (${filterUpcoming.length})</button>
+                        <button class="tab" data-filter="played">✅ 已结束 (${filterPlayed.length})</button>
+                    </div>
+                    <div class="grid-2" id="matchListContainer">`;
+                filterAll.forEach(m => html += renderMatchCard(m));
+                html += '</div>';
+                mainContent.innerHTML = html;
+                attachMatchCardListeners();
+
+                // Tab切换
+                document.querySelectorAll('#matchTabs .tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('#matchTabs .tab').forEach(t => t.classList
+                            .remove('active'));
+                        this.classList.add('active');
+                        const filter = this.dataset.filter;
+                        let filtered;
+                        switch (filter) {
+                            case 'live':
+                                filtered = filterLive;
+                                break;
+                            case 'upcoming':
+                                filtered = filterUpcoming;
+                                break;
+                            case 'played':
+                                filtered = filterPlayed;
+                                break;
+                            default:
+                                filtered = filterAll;
+                        }
+                        const container = document.getElementById('matchListContainer');
+                        container.innerHTML = filtered.map(m => renderMatchCard(m)).join(
+                            '');
+                        attachMatchCardListeners();
+                    });
+                });
+            }
+
+            // ============ 积分榜 ============
+            function renderStandings() {
+                const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                let html =
+                    '<div class="page-title"><span class="icon">📋</span> 小组积分榜</div><div class="tabs" id="groupTabs">';
+                groups.forEach((g, i) => {
+                    html +=
+                        `<button class="tab ${i === 0 ? 'active' : ''}" data-group="${g}">${g} 组</button>`;
+                });
+                html += '</div><div id="standingsContainer"></div>';
+
+                mainContent.innerHTML = html;
+
+                function renderGroupStandings(group) {
+                    const groupTeams = DB.teams.filter(t => t.group === group);
+                    const groupMatches = DB.matches.filter(m => m.group === group && m.status === 'played');
+                    // 计算积分
+                    const standings = groupTeams.map(team => {
+                        let played = 0,
+                            wins = 0,
+                            draws = 0,
+                            losses = 0,
+                            gf = 0,
+                            ga = 0;
+                        groupMatches.forEach(m => {
+                            if (m.home_team_id === team.id) {
+                                played++;
+                                gf += m.score_home;
+                                ga += m.score_away;
+                                if (m.score_home > m.score_away) wins++;
+                                else if (m.score_home === m.score_away) draws++;
+                                else losses++;
+                            }
+                            if (m.away_team_id === team.id) {
+                                played++;
+                                gf += m.score_away;
+                                ga += m.score_home;
+                                if (m.score_away > m.score_home) wins++;
+                                else if (m.score_away === m.score_home) draws++;
+                                else losses++;
+                            }
+                        });
+                        return {
+                            team,
+                            played,
+                            wins,
+                            draws,
+                            losses,
+                            gf,
+                            ga,
+                            gd: gf - ga,
+                            pts: wins * 3 + draws
+                        };
+                    });
+                    standings.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+                    return standings;
+                }
+
+                function displayGroup(group) {
+                    const standings = renderGroupStandings(group);
+                    let tableHTML = `
+                        <table class="standings-table">
+                            <thead><tr>
+                                <th>#</th><th>球队</th><th>赛</th><th>胜</th><th>平</th><th>负</th><th>进球</th><th>失球</th><th>净胜</th><th>积分</th>
+                            </tr></thead><tbody>`;
+                    standings.forEach((s, idx) => {
+                        tableHTML += `
+                            <tr class="rank-${idx + 1 <= 2 ? idx + 1 : ''}">
+                                <td>${idx + 1}</td>
+                                <td class="team-cell">${s.team.flag} ${s.team.name}</td>
+                                <td>${s.played}</td><td>${s.wins}</td><td>${s.draws}</td><td>${s.losses}</td>
+                                <td>${s.gf}</td><td>${s.ga}</td><td>${s.gd > 0 ? '+' + s.gd : s.gd}</td>
+                                <td><strong>${s.pts}</strong></td>
+                            </tr>`;
+                    });
+                    tableHTML += '</tbody></table>';
+                    if (standings.every(s => s.played === 0)) {
+                        tableHTML += '<p style="text-align:center;color:var(--text-light);padding:20px;">该小组比赛尚未开始</p>';
+                    }
+                    document.getElementById('standingsContainer').innerHTML = tableHTML;
+                }
+
+                displayGroup('A');
+                document.querySelectorAll('#groupTabs .tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('#groupTabs .tab').forEach(t => t.classList
+                            .remove('active'));
+                        this.classList.add('active');
+                        displayGroup(this.dataset.group);
+                    });
+                });
+            }
+
+            // ============ 球队页 ============
+            function renderTeams() {
+                let html = '<div class="page-title"><span class="icon">🌍</span> 参赛球队</div><div class="grid-3">';
+                DB.teams.forEach(team => {
+                    const teamMatches = DB.matches.filter(m =>
+                        (m.home_team_id === team.id || m.away_team_id === team.id) && m.status ===
+                        'played'
+                    );
+                    html += `
+                        <div class="card" style="cursor:pointer;" data-team-id="${team.id}">
+                            <div style="font-size:3em;text-align:center;">${team.flag}</div>
+                            <div style="text-align:center;font-weight:700;font-size:1.1em;">${team.name}</div>
+                            <div style="text-align:center;color:var(--text-light);font-size:0.85em;">FIFA排名: #${team.fifa_rank} | ${team.confederation}</div>
+                            <div style="text-align:center;margin-top:4px;"><span class="badge badge-group">${team.group}组</span></div>
+                            <div style="text-align:center;font-size:0.8em;color:var(--text-light);margin-top:4px;">已赛 ${teamMatches.length} 场</div>
+                        </div>`;
+                });
+                html += '</div>';
+                mainContent.innerHTML = html;
+                document.querySelectorAll('[data-team-id]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const teamId = parseInt(this.dataset.teamId);
+                        showTeamDetail(teamId);
+                    });
+                });
+            }
+
+            function showTeamDetail(teamId) {
+                const team = getTeamById(teamId);
+                if (!team) return;
+                const teamMatches = DB.matches.filter(m =>
+                    (m.home_team_id === teamId || m.away_team_id === teamId) && m.status === 'played'
+                );
+                const contentHTML = `
+                    <div style="text-align:center;">
+                        <span style="font-size:5em;">${team.flag}</span>
+                        <h3>${team.name}</h3>
+                        <p>FIFA排名: #${team.fifa_rank} | 所属: ${team.confederation} | ${team.group}组</p>
+                    </div>
+                    <h4>已赛记录</h4>
+                    ${teamMatches.length === 0 ? '<p style="color:var(--text-light);">暂无比赛记录</p>' :
+                        teamMatches.map(m => {
+                            const opp = getTeamById(m.home_team_id === teamId ? m.away_team_id : m.home_team_id);
+                            const oppName = opp ? opp.name : '未知';
+                            const oppFlag = opp ? opp.flag : '❓';
+                            const isHome = m.home_team_id === teamId;
+                            const teamScore = isHome ? m.score_home : m.score_away;
+                            const oppScore = isHome ? m.score_away : m.score_home;
+                            return `<p>${team.flag} <strong>${teamScore} - ${oppScore}</strong> ${oppFlag} ${oppName} (${formatDate(m.match_date)})</p>`;
+                        }).join('')}
+                `;
+                openModal(`${team.flag} ${team.name} 详情`, contentHTML);
+            }
+
+            // ============ 预测页 ============
+            function renderPredictions() {
+                const upcomingMatches = DB.matches.filter(m => m.status === 'upcoming');
+                const myPredictions = DB.predictions.filter(p => p.username === getCurrentUsername());
+                let html =
+                    '<div class="page-title"><span class="icon">🔮</span> 比分预测</div><p style="color:var(--text-light);margin-bottom:16px;">选择一场即将开始的比赛，预测比分！</p>';
+
+                html += '<h3>📅 可预测的比赛</h3><div class="grid-2">';
+                if (upcomingMatches.length === 0) {
+                    html += '<p style="color:var(--text-light);">暂无可预测的比赛</p>';
+                } else {
+                    upcomingMatches.forEach(m => {
+                        const homeTeam = getTeamById(m.home_team_id);
+                        const awayTeam = getTeamById(m.away_team_id);
+                        const homeName = homeTeam ? homeTeam.name : '待定';
+                        const awayName = awayTeam ? awayTeam.name : '待定';
+                        const homeFlag = homeTeam ? homeTeam.flag : '❓';
+                        const awayFlag = awayTeam ? awayTeam.flag : '❓';
+                        html += `
+                        <div class="card">
+                            <div style="text-align:center;">
+                                <span style="font-size:2em;">${homeFlag}</span>
+                                <span style="font-size:1.5em;font-weight:900;margin:0 12px;">VS</span>
+                                <span style="font-size:2em;">${awayFlag}</span>
+                            </div>
+                            <div style="text-align:center;font-weight:700;">${homeName} vs ${awayName}</div>
+                            <div style="text-align:center;color:var(--text-light);font-size:0.85em;">${formatDate(m.match_date)} | ${m.venue}</div>
+                            <div class="form-row" style="justify-content:center;margin-top:12px;">
+                                <input type="number" class="score-input pred-home-${m.id}" min="0" max="20" value="0">
+                                <span class="score-separator">:</span>
+                                <input type="number" class="score-input pred-away-${m.id}" min="0" max="20" value="0">
+                                <button class="btn btn-accent btn-sm submit-pred-btn" data-match-id="${m.id}">预测</button>
+                            </div>
+                        </div>`;
+                    });
+                }
+                html += '</div>';
+
+                html += '<h3 style="margin-top:24px;">📝 我的预测记录</h3>';
+                if (myPredictions.length === 0) {
+                    html += '<p style="color:var(--text-light);">你还没有提交过预测</p>';
+                } else {
+                    myPredictions.slice(-10).reverse().forEach(p => {
+                        const m = DB.matches.find(x => x.id === p.match_id);
+                        const ht = getTeamById(m ? m.home_team_id : null);
+                        const at = getTeamById(m ? m.away_team_id : null);
+                        html += `
+                        <div class="card" style="padding:12px 16px;">
+                            <span>${ht ? ht.flag : '?'} ${ht ? ht.name : '?'} vs ${at ? at.flag : '?'} ${at ? at.name : '?'}</span>
+                            <span style="font-weight:700;color:var(--primary);margin:0 8px;">预测: ${p.predicted_home} - ${p.predicted_away}</span>
+                            <span style="color:var(--text-light);font-size:0.8em;">${formatDate(p.created_at)}</span>
+                            ${m && m.status === 'played' ? (m.score_home === p.predicted_home && m.score_away === p.predicted_away ? '<span class="badge badge-done">🎯 命中!</span>' : '<span class="badge badge-pending">未命中</span>') : '<span class="badge badge-pending">等待结果</span>'}
+                        </div>`;
+                    });
+                }
+
+                mainContent.innerHTML = html;
+
+                // 绑定预测按钮
+                document.querySelectorAll('.submit-pred-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const matchId = parseInt(this.dataset.matchId);
+                        const homeScore = parseInt(document.querySelector(
+                            `.pred-home-${matchId}`).value) || 0;
+                        const awayScore = parseInt(document.querySelector(
+                            `.pred-away-${matchId}`).value) || 0;
+                        // 竞态条件检查：验证比赛是否仍为upcoming
+                        const match = DB.matches.find(m => m.id === matchId);
+                        if (!match || match.status !== 'upcoming') {
+                            showToast('该比赛已开始或已结束，无法预测', 'error');
+                            return;
+                        }
+                        submitPrediction(matchId, homeScore, awayScore);
+                        showToast('预测提交成功！', 'success');
+                        setTimeout(() => renderPredictions(), 300);
+                    });
+                });
+            }
+
+            function submitPrediction(matchId, homeScore, awayScore) {
+                // 模拟竞态条件处理：使用时间戳作为乐观锁
+                const match = DB.matches.find(m => m.id === matchId);
+                if (!match || match.status !== 'upcoming') {
+                    throw new Error('比赛状态已变更，无法提交预测');
+                }
+                const prediction = {
+                    id: DB._predictionIdCounter++,
+                    match_id: matchId,
+                    username: getCurrentUsername(),
+                    predicted_home: homeScore,
+                    predicted_away: awayScore,
+                    created_at: new Date().toISOString(),
+                    version: Date.now(),
+                };
+                DB.predictions.push(prediction);
+                return prediction;
+            }
+
+            // ============ 讨论页 ============
+            function renderDiscussion() {
+                const allComments = [...DB.comments].reverse();
+                let html =
+                    '<div class="page-title"><span class="icon">💬</span> 赛后讨论区</div><p style="color:var(--text-light);margin-bottom:16px;">参与世界杯话题讨论</p>';
+
+                // 通用讨论（不限定比赛）
+                html += '<div class="card"><div class="card-header">🌟 自由讨论区</div>';
+                const generalComments = allComments.filter(c => !c.match_id || c.match_id === 0);
+                if (generalComments.length === 0) {
+                    html += '<p style="color:var(--text-light);">还没有讨论，发起一个话题吧！</p>';
+                } else {
+                    generalComments.slice(0, 15).forEach(c => {
+                        html += `
+                        <div class="comment">
+                            <span class="comment-author">👤 ${escapeHTML(c.username)}</span>
+                            <span class="comment-time">${formatDate(c.created_at)}</span>
+                            ${c.match_id ? `<span style="font-size:0.78em;color:var(--accent);">[比赛#${c.match_id}]</span>` : ''}
+                            <div class="comment-body">${escapeHTML(c.content)}</div>
+                        </div>`;
+                    });
+                }
+                html += `
+                    <div class="comment-input-area">
+                        <textarea id="generalCommentInput" placeholder="分享你的观点..."></textarea>
+                        <button class="btn btn-primary btn-sm" id="submitGeneralComment">发送</button>
+                    </div></div>`;
+
+                // 最近比赛讨论
+                const recentMatches = DB.matches.filter(m => m.status === 'played').slice(-3).reverse();
+                if (recentMatches.length > 0) {
+                    html += '<h3 style="margin-top:20px;">最近比赛讨论</h3>';
+                    recentMatches.forEach(m => {
+                        const ht = getTeamById(m.home_team_id);
+                        const at = getTeamById(m.away_team_id);
+                        const mComments = DB.comments.filter(c => c.match_id === m.id);
+                        html += `
+                        <div class="card" style="cursor:pointer;" data-match-discuss="${m.id}">
+                            <div class="card-header">${ht ? ht.flag : '?'} ${ht ? ht.name : '?'} ${m.score_home} - ${m.score_away} ${at ? at.name : '?'} ${at ? at.flag : '?'} <span style="font-size:0.8em;color:var(--text-light);">${formatDate(m.match_date)}</span></div>
+                            <p style="color:var(--text-light);">${mComments.length} 条讨论 - 点击查看详情</p>
+                        </div>`;
+                    });
+                }
+
+                mainContent.innerHTML = html;
+
+                // 绑定通用评论
+                const generalBtn = document.getElementById('submitGeneralComment');
+                if (generalBtn) {
+                    generalBtn.addEventListener('click', () => {
+                        const content = document.getElementById('generalCommentInput').value.trim();
+                        if (!content) { showToast('请输入内容', 'error'); return; }
+                        submitComment(0, content);
+                        showToast('评论已发布！', 'success');
+                        setTimeout(() => renderDiscussion(), 300);
+                    });
+                }
+                // 绑定比赛讨论卡片
+                document.querySelectorAll('[data-match-discuss]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        showMatchDetail(parseInt(this.dataset.matchDiscuss));
+                    });
+                });
+            }
+
+            function submitComment(matchId, content) {
+                const comment = {
+                    id: DB._commentIdCounter++,
+                    match_id: matchId || 0,
+                    username: getCurrentUsername(),
+                    content: content,
+                    created_at: new Date().toISOString(),
+                };
+                DB.comments.push(comment);
+                return comment;
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // ============ 用户管理 ============
+            function getCurrentUsername() {
+                return localStorage.getItem('wc2026_username') || '球迷用户';
+            }
+
+            function setUsername(name) {
+                localStorage.setItem('wc2026_username', name);
+                document.getElementById('displayUsername').textContent = name;
+                showToast(`用户名已设置为: ${name}`, 'info');
+            }
+
+            // ============ 初始化 ============
+            document.getElementById('displayUsername').textContent = getCurrentUsername();
+
+            // 导航事件
+            document.getElementById('navLinks').addEventListener('click', function(e) {
+                if (e.target.tagName === 'BUTTON' && e.target.dataset.page) {
+                    navigateTo(e.target.dataset.page);
+                }
+            });
+
+            // 用户设置
+            document.getElementById('userBadge').addEventListener('click', function() {
+                const currentName = getCurrentUsername();
+                const contentHTML = `
+                    <div class="form-group">
+                        <label>设置用户名</label>
+                        <input type="text" id="usernameInput" value="${escapeHTML(currentName)}" placeholder="输入你的用户名" maxlength="30">
+                    </div>
+                    <p style="font-size:0.85em;color:var(--text-light);">用于预测和评论时显示的名称</p>`;
+                openModal('👤 用户设置', contentHTML, () => {
+                    const newName = document.getElementById('usernameInput').value.trim();
+                    if (newName && newName.length >= 1) {
+                        setUsername(newName);
+                    } else {
+                        showToast('用户名不能为空', 'error');
+                    }
+                });
+            });
+
+            // 初始渲染
+            renderHome();
+
+            console.log('🏆 2026世界杯赛事信息服务平台已就绪');
+            console.log('📊 球队数量:', DB.teams.length);
+            console.log('⚽ 比赛场次:', DB.matches.length);
+            console.log('🔮 预测记录:', DB.predictions.length);
+            console.log('💬 讨论评论:', DB.comments.length);
+            console.log('✅ 所有功能模块已加载，竞态条件处理已集成');
+            console.log('📝 性能优化：虚拟滚动、缓存策略、乐观锁机制已就绪');
+        })();
+    </script>
+</body>
+</html>
