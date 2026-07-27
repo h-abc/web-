@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026世界杯完赛数据平台</title>
+    <style>
+        :root{--primary:#1a3c5e;--secondary:#c8a951;--accent:#e63946;--bg:#f5f0e8;--card:#fff;--text:#2c2c2c;--light:#6b6b6b;--border:#e0d8cc;--success:#2a9d8f;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:10px;}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+        .header{background:linear-gradient(135deg,#0d2847,#1a3c5e 40%,#1e4d7b);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+        .header-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;flex-wrap:wrap;gap:10px}
+        .logo{display:flex;align-items:center;gap:12px;font-size:1.4em;font-weight:700}
+        .logo-icon{width:44px;height:44px;border-radius:50%;background:var(--secondary);display:flex;align-items:center;justify-content:center;font-size:1.6em}
+        .nav-links{display:flex;gap:6px;flex-wrap:wrap}
+        .nav-links button{background:rgba(255,255,255,.08);color:#e0d8cc;border:1px solid rgba(255,255,255,.15);padding:9px 18px;border-radius:25px;cursor:pointer;font-size:.95em;transition:.2s;font-weight:500}
+        .nav-links button:hover,.nav-links button.active{background:rgba(255,255,255,.2);color:#fff;border-color:var(--secondary)}
+        .nav-links button.active{background:var(--secondary);color:#1a3c5e;border-color:var(--secondary);font-weight:700}
+        .main-container{max-width:1300px;margin:0 auto;padding:24px}
+        .page-title{font-size:1.8em;font-weight:700;margin-bottom:20px;color:var(--primary);display:flex;align-items:center;gap:10px}
+        .card{background:var(--card);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow);border:1px solid var(--border);transition:.2s;margin-bottom:16px}
+        .card:hover{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-1px)}
+        .grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+        .grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+        .grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+        .match-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;transition:.2s;border-left:4px solid var(--success)}
+        .match-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.14);transform:translateY(-2px)}
+        .match-status{font-size:.8em;font-weight:700;margin-bottom:6px;color:var(--success)}
+        .match-teams{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0}
+        .team-block{text-align:center;flex:1;min-width:70px}
+        .team-flag{font-size:2.2em;display:block;margin-bottom:4px}
+        .team-name{font-weight:700;font-size:.9em;color:var(--primary);word-break:break-word}
+        .match-score{font-size:1.8em;font-weight:900;color:var(--primary);min-width:80px;text-align:center}
+        .match-info{font-size:.85em;color:var(--light);text-align:center;margin-top:8px}
+        .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.78em;font-weight:700;background:var(--success);color:#fff;margin-right:4px}
+        .standings-table{width:100%;border-collapse:collapse;font-size:.9em;margin-bottom:20px}
+        .standings-table th,.standings-table td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--border)}
+        .standings-table th{background:#f8f5ef;font-weight:700;color:var(--primary);font-size:.85em}
+        .standings-table tr:hover td{background:#fdfaf4}
+        .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0;flex-wrap:wrap}
+        .tab{padding:10px 20px;cursor:pointer;border:none;background:transparent;font-weight:600;color:var(--light);transition:.2s;border-bottom:3px solid transparent;margin-bottom:-2px}
+        .tab.active{color:var(--primary);border-bottom-color:var(--secondary)}
+        .btn{display:inline-block;padding:10px 20px;border-radius:25px;border:none;cursor:pointer;font-weight:600;font-size:.95em;transition:.2s}
+        .btn-primary{background:var(--primary);color:#fff}
+        .btn-primary:hover{background:#1e4d7b}
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center}
+        .modal{background:#fff;border-radius:14px;padding:28px 32px;max-width:600px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:slideUp .25s ease}
+        @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:10px;color:#fff;font-weight:600;background:var(--success);z-index:300;animation:slideIn .3s ease}
+        @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+        .error-box{background:#fff0f0;border:2px solid var(--accent);padding:20px;border-radius:10px;margin:20px 0;color:var(--accent)}
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="header-inner">
+        <div class="logo"><span class="logo-icon">🏆</span><span>2026世界杯</span></div>
+        <nav class="nav-links" id="navLinks">
+            <button data-page="home" class="active">📊 概览</button>
+            <button data-page="matches">⚽ 赛程</button>
+            <button data-page="standings">📋 积分榜</button>
+            <button data-page="teams">🌍 球队</button>
+            <button data-page="predictions">🔮 预测</button>
+            <button data-page="discuss">💬 讨论</button>
+        </nav>
+    </div>
+</header>
+<main class="main-container" id="mainContent"></main>
+<div id="toastContainer"></div>
+<div id="modalContainer"></div>
+
+<script>
+// ==================== 静态赛事数据（48 支球队 + 104 场比赛） ====================
+const TEAMS = [
+    {id:1,name:"墨西哥",flag:"🇲🇽",group:"A"}, {id:2,name:"南非",flag:"🇿🇦",group:"A"}, {id:3,name:"韩国",flag:"🇰🇷",group:"A"}, {id:4,name:"捷克",flag:"🇨🇿",group:"A"},
+    {id:5,name:"瑞士",flag:"🇨🇭",group:"B"}, {id:6,name:"加拿大",flag:"🇨🇦",group:"B"}, {id:7,name:"波黑",flag:"🇧🇦",group:"B"}, {id:8,name:"卡塔尔",flag:"🇶🇦",group:"B"},
+    {id:9,name:"巴西",flag:"🇧🇷",group:"C"}, {id:10,name:"摩洛哥",flag:"🇲🇦",group:"C"}, {id:11,name:"苏格兰",flag:"🏴",group:"C"}, {id:12,name:"海地",flag:"🇭🇹",group:"C"},
+    {id:13,name:"美国",flag:"🇺🇸",group:"D"}, {id:14,name:"巴拉圭",flag:"🇵🇾",group:"D"}, {id:15,name:"澳大利亚",flag:"🇦🇺",group:"D"}, {id:16,name:"土耳其",flag:"🇹🇷",group:"D"},
+    {id:17,name:"德国",flag:"🇩🇪",group:"E"}, {id:18,name:"科特迪瓦",flag:"🇨🇮",group:"E"}, {id:19,name:"厄瓜多尔",flag:"🇪🇨",group:"E"}, {id:20,name:"库拉索",flag:"🇨🇼",group:"E"},
+    {id:21,name:"荷兰",flag:"🇳🇱",group:"F"}, {id:22,name:"日本",flag:"🇯🇵",group:"F"}, {id:23,name:"瑞典",flag:"🇸🇪",group:"F"}, {id:24,name:"突尼斯",flag:"🇹🇳",group:"F"},
+    {id:25,name:"比利时",flag:"🇧🇪",group:"G"}, {id:26,name:"埃及",flag:"🇪🇬",group:"G"}, {id:27,name:"伊朗",flag:"🇮🇷",group:"G"}, {id:28,name:"新西兰",flag:"🇳🇿",group:"G"},
+    {id:29,name:"西班牙",flag:"🇪🇸",group:"H"}, {id:30,name:"佛得角",flag:"🇨🇻",group:"H"}, {id:31,name:"乌拉圭",flag:"🇺🇾",group:"H"}, {id:32,name:"沙特",flag:"🇸🇦",group:"H"},
+    {id:33,name:"法国",flag:"🇫🇷",group:"I"}, {id:34,name:"挪威",flag:"🇳🇴",group:"I"}, {id:35,name:"塞内加尔",flag:"🇸🇳",group:"I"}, {id:36,name:"伊拉克",flag:"🇮🇶",group:"I"},
+    {id:37,name:"阿根廷",flag:"🇦🇷",group:"J"}, {id:38,name:"奥地利",flag:"🇦🇹",group:"J"}, {id:39,name:"阿尔及利亚",flag:"🇩🇿",group:"J"}, {id:40,name:"约旦",flag:"🇯🇴",group:"J"},
+    {id:41,name:"葡萄牙",flag:"🇵🇹",group:"K"}, {id:42,name:"哥伦比亚",flag:"🇨🇴",group:"K"}, {id:43,name:"刚果(金)",flag:"🇨🇩",group:"K"}, {id:44,name:"乌兹别克斯坦",flag:"🇺🇿",group:"K"},
+    {id:45,name:"英格兰",flag:"🏴",group:"L"}, {id:46,name:"克罗地亚",flag:"🇭🇷",group:"L"}, {id:47,name:"加纳",flag:"🇬🇭",group:"L"}, {id:48,name:"巴拿马",flag:"🇵🇦",group:"L"}
+];
+const MATCHES = [
+    // 小组赛 A 组
+    {id:1,home:1,away:2,group:"A",date:"6.12 03:00",score_h:2,score_a:0,stage:"GROUP"},
+    {id:2,home:3,away:4,group:"A",date:"6.12 10:00",score_h:2,score_a:1,stage:"GROUP"},
+    {id:3,home:4,away:2,group:"A",date:"6.19 00:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:4,home:1,away:3,group:"A",date:"6.19 09:00",score_h:1,score_a:0,stage:"GROUP"},
+    {id:5,home:2,away:3,group:"A",date:"6.25 09:00",score_h:1,score_a:0,stage:"GROUP"},
+    {id:6,home:4,away:1,group:"A",date:"6.25 09:00",score_h:0,score_a:3,stage:"GROUP"},
+    // B 组
+    {id:7,home:6,away:7,group:"B",date:"6.13 03:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:8,home:8,away:5,group:"B",date:"6.14 03:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:9,home:5,away:7,group:"B",date:"6.19 03:00",score_h:4,score_a:1,stage:"GROUP"},
+    {id:10,home:6,away:8,group:"B",date:"6.19 06:00",score_h:6,score_a:0,stage:"GROUP"},
+    {id:11,home:5,away:6,group:"B",date:"6.25 03:00",score_h:2,score_a:1,stage:"GROUP"},
+    {id:12,home:7,away:8,group:"B",date:"6.25 03:00",score_h:3,score_a:1,stage:"GROUP"},
+    // C 组
+    {id:13,home:9,away:10,group:"C",date:"6.14 06:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:14,home:12,away:11,group:"C",date:"6.14 09:00",score_h:0,score_a:1,stage:"GROUP"},
+    {id:15,home:11,away:10,group:"C",date:"6.20 06:00",score_h:0,score_a:1,stage:"GROUP"},
+    {id:16,home:9,away:12,group:"C",date:"6.20 08:30",score_h:3,score_a:0,stage:"GROUP"},
+    {id:17,home:11,away:9,group:"C",date:"6.25 06:00",score_h:0,score_a:3,stage:"GROUP"},
+    {id:18,home:10,away:12,group:"C",date:"6.25 06:00",score_h:4,score_a:2,stage:"GROUP"},
+    // D 组
+    {id:19,home:13,away:14,group:"D",date:"6.13 09:00",score_h:4,score_a:1,stage:"GROUP"},
+    {id:20,home:15,away:16,group:"D",date:"6.14 12:00",score_h:2,score_a:0,stage:"GROUP"},
+    {id:21,home:13,away:15,group:"D",date:"6.20 03:00",score_h:2,score_a:0,stage:"GROUP"},
+    {id:22,home:16,away:14,group:"D",date:"6.20 11:00",score_h:0,score_a:1,stage:"GROUP"},
+    {id:23,home:16,away:13,group:"D",date:"6.26 10:00",score_h:3,score_a:2,stage:"GROUP"},
+    {id:24,home:14,away:15,group:"D",date:"6.26 10:00",score_h:0,score_a:0,stage:"GROUP"},
+    // E 组
+    {id:25,home:17,away:20,group:"E",date:"6.15 01:00",score_h:7,score_a:1,stage:"GROUP"},
+    {id:26,home:18,away:19,group:"E",date:"6.15 07:00",score_h:1,score_a:0,stage:"GROUP"},
+    {id:27,home:17,away:18,group:"E",date:"6.21 04:00",score_h:2,score_a:1,stage:"GROUP"},
+    {id:28,home:19,away:20,group:"E",date:"6.21 08:00",score_h:0,score_a:0,stage:"GROUP"},
+    {id:29,home:20,away:18,group:"E",date:"6.26 04:00",score_h:0,score_a:2,stage:"GROUP"},
+    {id:30,home:19,away:17,group:"E",date:"6.26 04:00",score_h:2,score_a:1,stage:"GROUP"},
+    // F 组
+    {id:31,home:21,away:22,group:"F",date:"6.15 04:00",score_h:2,score_a:2,stage:"GROUP"},
+    {id:32,home:23,away:24,group:"F",date:"6.15 10:00",score_h:5,score_a:1,stage:"GROUP"},
+    {id:33,home:21,away:23,group:"F",date:"6.21 01:00",score_h:5,score_a:1,stage:"GROUP"},
+    {id:34,home:24,away:22,group:"F",date:"6.21 12:00",score_h:0,score_a:4,stage:"GROUP"},
+    {id:35,home:24,away:21,group:"F",date:"6.26 07:00",score_h:1,score_a:3,stage:"GROUP"},
+    {id:36,home:22,away:23,group:"F",date:"6.26 07:00",score_h:1,score_a:1,stage:"GROUP"},
+    // G 组
+    {id:37,home:25,away:26,group:"G",date:"6.16 03:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:38,home:27,away:28,group:"G",date:"6.16 09:00",score_h:2,score_a:2,stage:"GROUP"},
+    {id:39,home:25,away:27,group:"G",date:"6.22 03:00",score_h:0,score_a:0,stage:"GROUP"},
+    {id:40,home:28,away:26,group:"G",date:"6.22 09:00",score_h:1,score_a:3,stage:"GROUP"},
+    {id:41,home:26,away:27,group:"G",date:"6.27 11:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:42,home:28,away:25,group:"G",date:"6.27 11:00",score_h:1,score_a:5,stage:"GROUP"},
+    // H 组
+    {id:43,home:29,away:30,group:"H",date:"6.16 00:00",score_h:0,score_a:0,stage:"GROUP"},
+    {id:44,home:32,away:31,group:"H",date:"6.16 06:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:45,home:29,away:32,group:"H",date:"6.22 00:00",score_h:4,score_a:0,stage:"GROUP"},
+    {id:46,home:31,away:30,group:"H",date:"6.22 06:00",score_h:2,score_a:2,stage:"GROUP"},
+    {id:47,home:30,away:32,group:"H",date:"6.27 08:00",score_h:0,score_a:0,stage:"GROUP"},
+    {id:48,home:31,away:29,group:"H",date:"6.27 08:00",score_h:0,score_a:1,stage:"GROUP"},
+    // I 组
+    {id:49,home:33,away:35,group:"I",date:"6.17 03:00",score_h:3,score_a:1,stage:"GROUP"},
+    {id:50,home:36,away:34,group:"I",date:"6.17 06:00",score_h:1,score_a:4,stage:"GROUP"},
+    {id:51,home:33,away:36,group:"I",date:"6.23 05:00",score_h:3,score_a:0,stage:"GROUP"},
+    {id:52,home:34,away:35,group:"I",date:"6.23 08:00",score_h:3,score_a:2,stage:"GROUP"},
+    {id:53,home:34,away:33,group:"I",date:"6.27 03:00",score_h:1,score_a:4,stage:"GROUP"},
+    {id:54,home:35,away:36,group:"I",date:"6.27 03:00",score_h:5,score_a:0,stage:"GROUP"},
+    // J 组
+    {id:55,home:37,away:39,group:"J",date:"6.17 09:00",score_h:3,score_a:0,stage:"GROUP"},
+    {id:56,home:38,away:40,group:"J",date:"6.17 12:00",score_h:3,score_a:1,stage:"GROUP"},
+    {id:57,home:37,away:38,group:"J",date:"6.23 01:00",score_h:2,score_a:0,stage:"GROUP"},
+    {id:58,home:40,away:39,group:"J",date:"6.23 11:00",score_h:1,score_a:2,stage:"GROUP"},
+    {id:59,home:39,away:38,group:"J",date:"6.28 10:00",score_h:3,score_a:3,stage:"GROUP"},
+    {id:60,home:40,away:37,group:"J",date:"6.28 10:00",score_h:1,score_a:3,stage:"GROUP"},
+    // K 组
+    {id:61,home:41,away:43,group:"K",date:"6.18 01:00",score_h:1,score_a:1,stage:"GROUP"},
+    {id:62,home:44,away:42,group:"K",date:"6.18 10:00",score_h:1,score_a:3,stage:"GROUP"},
+    {id:63,home:41,away:44,group:"K",date:"6.24 01:00",score_h:5,score_a:0,stage:"GROUP"},
+    {id:64,home:42,away:43,group:"K",date:"6.24 10:00",score_h:1,score_a:0,stage:"GROUP"},
+    {id:65,home:42,away:41,group:"K",date:"6.28 07:30",score_h:0,score_a:0,stage:"GROUP"},
+    {id:66,home:43,away:44,group:"K",date:"6.28 07:30",score_h:3,score_a:1,stage:"GROUP"},
+    // L 组
+    {id:67,home:45,away:46,group:"L",date:"6.18 04:00",score_h:4,score_a:2,stage:"GROUP"},
+    {id:68,home:47,away:48,group:"L",date:"6.18 07:00",score_h:1,score_a:0,stage:"GROUP"},
+    {id:69,home:45,away:47,group:"L",date:"6.24 04:00",score_h:0,score_a:0,stage:"GROUP"},
+    {id:70,home:48,away:46,group:"L",date:"6.24 07:00",score_h:0,score_a:1,stage:"GROUP"},
+    {id:71,home:48,away:45,group:"L",date:"6.28 05:00",score_h:0,score_a:2,stage:"GROUP"},
+    {id:72,home:46,away:47,group:"L",date:"6.28 05:00",score_h:2,score_a:1,stage:"GROUP"},
+    // 1/16 决赛
+    {id:73,home:42,away:47,date:"7.04 09:30",score_h:1,score_a:0,stage:"R32"},
+    {id:74,home:37,away:30,date:"7.04 06:00",score_h:3,score_a:2,stage:"R32",extra:"加时120分钟"},
+    {id:75,home:15,away:26,date:"7.04 02:00",score_h:3,score_a:3,penalties:{home:5,away:3},stage:"R32",extra:"点球决胜"},
+    {id:76,home:5,away:39,date:"7.03 11:00",score_h:2,score_a:0,stage:"R32"},
+    {id:77,home:41,away:46,date:"7.03 07:00",score_h:2,score_a:1,stage:"R32"},
+    {id:78,home:29,away:38,date:"7.03 03:00",score_h:3,score_a:0,stage:"R32"},
+    {id:79,home:13,away:7,date:"7.02 08:00",score_h:2,score_a:0,stage:"R32"},
+    {id:80,home:25,away:35,date:"7.02 04:00",score_h:3,score_a:2,stage:"R32",extra:"加时120分钟"},
+    {id:81,home:45,away:43,date:"7.02 00:00",score_h:2,score_a:1,stage:"R32"},
+    {id:82,home:1,away:19,date:"7.01 10:00",score_h:2,score_a:0,stage:"R32"},
+    {id:83,home:33,away:23,date:"7.01 05:00",score_h:3,score_a:0,stage:"R32"},
+    {id:84,home:18,away:34,date:"7.01 01:00",score_h:1,score_a:2,stage:"R32"},
+    {id:85,home:21,away:10,date:"6.30 09:00",score_h:3,score_a:3,penalties:{home:3,away:4},stage:"R32",extra:"点球决胜"},
+    {id:86,home:17,away:14,date:"6.30 04:30",score_h:4,score_a:4,penalties:{home:4,away:5},stage:"R32",extra:"点球决胜"},
+    {id:87,home:9,away:22,date:"6.30 01:00",score_h:2,score_a:1,stage:"R32"},
+    {id:88,home:2,away:6,date:"6.29 03:00",score_h:0,score_a:1,stage:"R32"},
+    // 1/8 决赛
+    {id:89,home:5,away:42,date:"7.08 04:00",score_h:4,score_a:4,penalties:{home:4,away:3},stage:"R16",extra:"点球决胜"},
+    {id:90,home:37,away:26,date:"7.08 00:00",score_h:3,score_a:2,stage:"R16"},
+    {id:91,home:13,away:25,date:"7.07 08:00",score_h:1,score_a:4,stage:"R16"},
+    {id:92,home:41,away:29,date:"7.07 03:00",score_h:0,score_a:1,stage:"R16"},
+    {id:93,home:1,away:45,date:"7.06 09:00",score_h:2,score_a:3,stage:"R16"},
+    {id:94,home:9,away:34,date:"7.06 04:00",score_h:1,score_a:2,stage:"R16"},
+    {id:95,home:14,away:33,date:"7.05 05:00",score_h:0,score_a:1,stage:"R16"},
+    {id:96,home:6,away:10,date:"7.05 01:00",score_h:0,score_a:3,stage:"R16"},
+    // 1/4 决赛
+    {id:97,home:37,away:5,date:"7.12 09:00",score_h:3,score_a:1,stage:"QF",extra:"加时120分钟"},
+    {id:98,home:34,away:45,date:"7.12 05:00",score_h:1,score_a:2,stage:"QF",extra:"加时120分钟"},
+    {id:99,home:29,away:25,date:"7.11 03:00",score_h:2,score_a:1,stage:"QF"},
+    {id:100,home:33,away:10,date:"7.10 04:00",score_h:2,score_a:0,stage:"QF"},
+    // 半决赛
+    {id:101,home:45,away:37,date:"7.16 03:00",score_h:1,score_a:2,stage:"SF"},
+    {id:102,home:33,away:29,date:"7.15 03:00",score_h:0,score_a:2,stage:"SF"},
+    // 季军赛
+    {id:103,home:33,away:45,date:"7.19 05:00",score_h:4,score_a:6,stage:"3RD"},
+    // 决赛
+    {id:104,home:29,away:37,date:"7.20 03:00",score_h:1,score_a:0,stage:"FINAL",extra:"加时120分钟"}
+];
+
+// ========== 工具函数 ==========
+function getTeamById(id) { return TEAMS.find(t => t.id === id) || { name: '?', flag: '❓' }; }
+function formatDate(str) { return str; }
+
+function computeStandings() {
+    const groups = 'ABCDEFGHIJKL'.split('');
+    return groups.map(g => {
+        const groupTeams = TEAMS.filter(t => t.group === g);
+        const groupMatches = MATCHES.filter(m => m.group === g && m.stage === 'GROUP');
+        const table = groupTeams.map(team => {
+            let p=0,w=0,d=0,l=0,gf=0,ga=0;
+            groupMatches.forEach(m => {
+                if (m.home === team.id) {
+                    p++; gf += m.score_h; ga += m.score_a;
+                    if (m.score_h > m.score_a) w++; else if (m.score_h === m.score_a) d++; else l++;
+                } else if (m.away === team.id) {
+                    p++; gf += m.score_a; ga += m.score_h;
+                    if (m.score_a > m.score_h) w++; else if (m.score_a === m.score_h) d++; else l++;
+                }
+            });
+            return { team: team.id, played: p, w, d, l, gf, ga, gd: gf - ga, pts: w * 3 + d };
+        }).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+        return { group: g, table };
+    });
+}
+const STANDINGS = computeStandings();
+
+// ========== 页面状态 ==========
+let currentPage = 'home';
+let user = localStorage.getItem('wc_user') || '球迷';
+let myPredictions = [];
+let discussionComments = [];
+
+// ========== API 调用 ==========
+async function loadMyPredictions() {
+    try {
+        const res = await fetch(`/api/predictions?username=${encodeURIComponent(user)}`);
+        myPredictions = await res.json();
+    } catch(e) { myPredictions = []; }
+}
+async function loadComments(matchId = null) {
+    try {
+        const url = matchId ? `/api/comments?matchId=${matchId}` : '/api/comments';
+        const res = await fetch(url);
+        discussionComments = await res.json();
+    } catch(e) { discussionComments = []; }
+}
+
+function toast(msg) {
+    const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+    document.getElementById('toastContainer').appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+}
+
+// ========== 导航 ==========
+document.getElementById('navLinks').addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON') {
+        currentPage = e.target.dataset.page;
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        render();
+    }
+});
+
+// ========== 渲染函数 ==========
+function matchCard(m) {
+    const h = getTeamById(m.home), a = getTeamById(m.away);
+    let score = `${m.score_h} - ${m.score_a}`;
+    if (m.penalties) score += ` (点球 ${m.penalties.home}-${m.penalties.away})`;
+    if (m.extra) score += ` [${m.extra}]`;
+    const stageText = m.stage === 'GROUP' ? `小组赛 ${m.group}组` :
+        (m.stage === 'R32' ? '1/16决赛' : (m.stage === 'R16' ? '1/8决赛' : (m.stage === 'QF' ? '1/4决赛' : (m.stage === 'SF' ? '半决赛' : (m.stage === '3RD' ? '季军赛' : '决赛')))));
+    return `<div class="match-card" data-id="${m.id}">
+        <span class="match-status">✅ 已结束</span><span class="badge">${stageText}</span>
+        <div class="match-teams">
+            <div class="team-block"><span class="team-flag">${h.flag}</span><span class="team-name">${h.name}</span></div>
+            <span class="match-score">${score}</span>
+            <div class="team-block"><span class="team-flag">${a.flag}</span><span class="team-name">${a.name}</span></div>
+        </div>
+        <div class="match-info">${m.date} ${m.group ? '| ' + m.group + '组' : ''}</div>
+    </div>`;
+}
+
+function bindMatchCards() {
+    document.querySelectorAll('.match-card').forEach(card => {
+        card.addEventListener('click', function () {
+            const id = parseInt(this.dataset.id);
+            const m = MATCHES.find(x => x.id === id);
+            if (!m) return;
+            const h = getTeamById(m.home), a = getTeamById(m.away);
+            let scoreText = `${m.score_h} - ${m.score_a}`;
+            if (m.penalties) scoreText += ` (点球 ${m.penalties.home}-${m.penalties.away})`;
+            if (m.extra) scoreText += ` [${m.extra}]`;
+            const html = `<div style="text-align:center">
+                <span style="font-size:3em">${h.flag} ${m.score_h} - ${m.score_a} ${a.flag}</span>
+                <h3>${h.name} vs ${a.name}</h3>
+                <p>${m.date} ${m.stage === 'GROUP' ? '小组赛 ' + m.group + '组' : ''} ${m.extra || ''}</p>
+            </div>`;
+            document.getElementById('modalContainer').innerHTML = `<div class="modal-overlay"><div class="modal"><button class="modal-close" style="float:right">&times;</button>${html}</div></div>`;
+            document.querySelector('.modal-close').addEventListener('click', () => document.getElementById('modalContainer').innerHTML = '');
+        });
+    });
+}
+
+function renderHome() {
+    const final = MATCHES.find(m => m.stage === 'FINAL');
+    document.getElementById('mainContent').innerHTML = `
+        <div class="page-title">🏆 2026世界杯完赛数据</div>
+        <div class="grid-2" style="margin-bottom:20px">
+            <div class="card" style="text-align:center"><div style="font-size:3em">⚽</div><div style="font-size:2em;font-weight:900">${MATCHES.length}</div><div>总场次</div></div>
+            <div class="card" style="text-align:center"><div style="font-size:3em">🏆</div><div style="font-size:1.5em;font-weight:900">${final ? getTeamById(final.home).flag + getTeamById(final.home).name + ' ' + final.score_h + '-' + final.score_a + ' ' + getTeamById(final.away).name + getTeamById(final.away).flag : '待定'}</div><div>决赛</div></div>
+        </div>
+        <h3>关键淘汰赛结果</h3>
+        <div class="grid-2">${MATCHES.filter(m => ['FINAL', '3RD', 'SF'].includes(m.stage)).map(m => matchCard(m)).join('')}</div>
+    `;
+    bindMatchCards();
+}
+
+function renderMatches() {
+    const all = [...MATCHES].sort((a, b) => a.date.localeCompare(b.date));
+    document.getElementById('mainContent').innerHTML = `<div class="page-title">⚽ 全部比赛 (${all.length}场)</div><div class="grid-2">${all.map(m => matchCard(m)).join('')}</div>`;
+    bindMatchCards();
+}
+
+function renderStandingsPage() {
+    let html = '<div class="page-title">📋 小组积分榜 (12组)</div>';
+    STANDINGS.forEach(g => {
+        html += `<h3 style="margin:16px 0 8px">${g.group} 组</h3>
+        <table class="standings-table"><thead><tr><th>#</th><th>球队</th><th>赛</th><th>胜</th><th>平</th><th>负</th><th>进</th><th>失</th><th>净</th><th>分</th></tr></thead><tbody>`;
+        g.table.forEach((row, i) => {
+            const team = getTeamById(row.team);
+            html += `<tr><td>${i + 1}</td><td style="text-align:left">${team.flag} ${team.name}</td><td>${row.played}</td><td>${row.w}</td><td>${row.d}</td><td>${row.l}</td><td>${row.gf}</td><td>${row.ga}</td><td>${row.gd}</td><td><strong>${row.pts}</strong></td></tr>`;
+        });
+        html += `</tbody></table>`;
+    });
+    document.getElementById('mainContent').innerHTML = html;
+}
+
+function renderTeams() {
+    document.getElementById('mainContent').innerHTML = `<div class="page-title">🌍 参赛球队 (48队)</div><div class="grid-4">${TEAMS.map(t => `
+        <div class="card" style="text-align:center">
+            <div style="font-size:2.5em">${t.flag}</div>
+            <div style="font-weight:700">${t.name}</div>
+            <div style="color:var(--light)">${t.group} 组</div>
+        </div>`).join('')}</div>`;
+}
+
+async function renderPredictions() {
+    await loadMyPredictions();
+    let html = `<div class="page-title">🔮 比分预测</div>
+        <p>选择比赛提交预测（与实际结果对比）</p>
+        <div class="card">
+            <select id="matchSelect">${MATCHES.map(m => `<option value="${m.id}">${getTeamById(m.home).name} vs ${getTeamById(m.away).name} (${m.date})</option>`).join('')}</select>
+            <input type="number" id="predHome" min="0" value="0" style="width:50px"> : <input type="number" id="predAway" min="0" value="0" style="width:50px">
+            <button class="btn btn-primary" id="submitPred">提交预测</button>
+        </div>
+        <h3>我的预测记录</h3>
+        <div id="predList">`;
+    if (myPredictions.length === 0) {
+        html += '<p>暂无预测记录</p>';
+    } else {
+        html += myPredictions.slice(-15).reverse().map(p => {
+            const h = getTeamById(p.home_team_id), a = getTeamById(p.away_team_id);
+            const correct = (p.predicted_home === p.score_home && p.predicted_away === p.score_away);
+            return `<div class="card"><strong>${h.name} vs ${a.name}</strong> 预测 ${p.predicted_home}-${p.predicted_away} | 实际 ${p.score_home}-${p.score_away} ${correct ? '🎯' : '❌'}</div>`;
+        }).join('');
+    }
+    html += `</div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    document.getElementById('submitPred').addEventListener('click', async () => {
+        const id = parseInt(document.getElementById('matchSelect').value);
+        const home = parseInt(document.getElementById('predHome').value) || 0;
+        const away = parseInt(document.getElementById('predAway').value) || 0;
+        const res = await fetch('/api/predictions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ matchId: id, home, away, username: user })
+        });
+        if (res.status === 409) {
+            toast('比赛已结束，无法预测');
+            return;
+        }
+        toast('预测已提交');
+        document.getElementById('predHome').value = 0;
+        document.getElementById('predAway').value = 0;
+        renderPredictions();
+    });
+}
+
+async function renderDiscuss() {
+    await loadComments(null);
+    let html = `<div class="page-title">💬 讨论区</div>
+        <textarea id="commInput" style="width:100%;height:80px;padding:10px;border-radius:8px;border:1px solid var(--border)" placeholder="发表评论..."></textarea>
+        <button class="btn btn-primary" id="submitComm" style="margin:8px 0 20px">发送</button>
+        <div>${discussionComments.map(c => `<div class="card"><strong>${c.username}</strong> <small>${c.created_at}</small><p>${c.content}</p></div>`).join('')}</div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    document.getElementById('submitComm').addEventListener('click', async () => {
+        const text = document.getElementById('commInput').value.trim();
+        if (!text) return toast('请输入内容');
+        await fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, content: text })
+        });
+        document.getElementById('commInput').value = '';
+        renderDiscuss();
+    });
+}
+
+function render() {
+    try {
+        if (currentPage === 'home') renderHome();
+        else if (currentPage === 'matches') renderMatches();
+        else if (currentPage === 'standings') renderStandingsPage();
+        else if (currentPage === 'teams') renderTeams();
+        else if (currentPage === 'predictions') renderPredictions();
+        else if (currentPage === 'discuss') renderDiscuss();
+    } catch (e) {
+        document.getElementById('mainContent').innerHTML = `<div class="error-box"><h3>渲染出错</h3><p>${e.message}</p></div>`;
+    }
+}
+render();
+</script>
+</body>
+</html>
