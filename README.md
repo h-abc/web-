@@ -4,7 +4,7 @@ Docker 启动命令
 1. 确保已安装 Docker 和 Docker Compose
 2. 在项目根目录执行：
    docker-compose up -d
-3. 访问 https://h-abc.github.io/web-/
+3. 访问 http://localhost:3000
    
 数据库与资源文件挂载说明
 - 数据库文件：容器内 /app/data/worldcup.db
